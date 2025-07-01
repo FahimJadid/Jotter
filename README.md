@@ -7,9 +7,7 @@ Jotter is a storage management system application that allows users to manage th
 - **User Authentication**
   - Login using email and password.
   - Forgot password feature with a 6-digit verification code sent via email.
-  - Signup options:
-    - With Google.
-    - Using username, email, password, confirm password, and acknowledgment of terms and conditions.
+  - Signup with username, email, password, confirm password, and acknowledgment of terms and conditions.
 
 - **Home Interface**
   - Users are directed to a home page resembling Google Drive after authentication.
@@ -49,7 +47,6 @@ Jotter is a storage management system application that allows users to manage th
 ### Authentication Routes (`/api/auth`)
 - `POST /register` - Register new user
 - `POST /login` - Login user
-- `POST /google` - Google OAuth login
 - `POST /refresh` - Refresh JWT token
 - `POST /logout` - Logout user
 
@@ -126,10 +123,6 @@ Jotter is a storage management system application that allows users to manage th
    DATABASE_URL=mongodb+srv://username:password@cluster.mongodb.net/jotter
    JWT_SECRET=your_super_secret_jwt_key
    PORT=5000
-   
-   # Google OAuth (optional)
-   GOOGLE_CLIENT_ID=your_google_client_id
-   GOOGLE_CLIENT_SECRET=your_google_client_secret
    
    # Email Service
    EMAIL_HOST=smtp.gmail.com

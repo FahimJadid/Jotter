@@ -14,12 +14,11 @@ router.post('/forgot-password', authController.forgotPassword);
 
 router.post('/reset-password', authController.resetPassword);
 
-// Google authentication
-router.post('/google', authController.googleAuth);
-
 // Middleware to protect routes
 router.use(authMiddleware);
 
 // Additional routes can be added here
 
-module.exports = router;
+module.exports = router;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+

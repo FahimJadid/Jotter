@@ -113,35 +113,3 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
-
-// Google Authentication
-exports.googleAuth = async (req, res) => {
-    const { token } = req.body;
-
-    if (!token) {
-        return res.status(400).json({ message: 'Token is required' });
-    }
-
-    try {
-        // Verify Google token and get user info
-        const userInfo = await emailService.verifyGoogleToken(token);
-        if (!userInfo) {
-            return res.status(401).json({ message: 'Invalid Google token' });
-        }
-
-        let user = await User.findOne({ email: userInfo.email });
-        if (!user) {
-            user = new User({
-                username: userInfo.name,
-                email: userInfo.email,
-                password: '', // No password for Google auth
-            });
-            await user.save();
-        }
-
-        const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token: jwtToken });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
-};
