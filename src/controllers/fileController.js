@@ -275,10 +275,16 @@ exports.removeFromFavorites = async (req, res) => {
     }
 };
 
-// Get all files for a user
+// Get all files for a user (excluding safe files)
 exports.getAllFiles = async (req, res) => {
     try {
-        const files = await File.find({ userId: req.user.id });
+        const files = await File.find({ 
+            userId: req.user.id, 
+            $or: [
+                { isSafe: { $exists: false } },
+                { isSafe: false }
+            ]
+        });
         res.status(200).json({ files });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching files', error: error.message });
@@ -291,11 +297,21 @@ exports.getFileById = async (req, res) => {
         const { id } = req.params;
         const userId = req.user.id;
 
-        // Find the file and verify ownership or shared access
+        // Find the file and verify ownership or shared access (excluding safe files unless specifically allowed)
         const file = await File.findOne({
-            $or: [
-                { _id: id, userId: userId },
-                { _id: id, sharedWith: req.user.email }
+            $and: [
+                {
+                    $or: [
+                        { _id: id, userId: userId },
+                        { _id: id, sharedWith: req.user.email }
+                    ]
+                },
+                {
+                    $or: [
+                        { isSafe: { $exists: false } },
+                        { isSafe: false }
+                    ]
+                }
             ]
         });
 
@@ -309,12 +325,18 @@ exports.getFileById = async (req, res) => {
     }
 };
 
-// Get all favorite files for a user
+// Get all favorite files for a user (excluding safe files)
 exports.getFavoriteFiles = async (req, res) => {
     try {
         const userId = req.user.id;
-        const favoriteFiles = await File.find({ userId: userId, isFavorite: true })
-            .sort({ updatedAt: -1 });
+        const favoriteFiles = await File.find({ 
+            userId: userId, 
+            isFavorite: true,
+            $or: [
+                { isSafe: { $exists: false } },
+                { isSafe: false }
+            ]
+        }).sort({ updatedAt: -1 });
 
         res.status(200).json({ files: favoriteFiles });
     } catch (error) {
@@ -336,8 +358,14 @@ exports.getFilesByFolder = async (req, res) => {
             }
         }
 
-        // Get files in folder or root files (folderId is null)
-        const query = { userId: userId };
+        // Get files in folder or root files (folderId is null) - excluding safe files
+        const query = { 
+            userId: userId,
+            $or: [
+                { isSafe: { $exists: false } },
+                { isSafe: false }
+            ]
+        };
         if (folderId === 'null') {
             query.folderId = null;
         } else {
@@ -385,11 +413,21 @@ exports.downloadFile = async (req, res) => {
         const { id } = req.params;
         const userId = req.user.id;
 
-        // Find the file and verify access (owner or shared)
+        // Find the file and verify access (owner or shared) - excluding safe files
         const file = await File.findOne({
-            $or: [
-                { _id: id, userId: userId },
-                { _id: id, sharedWith: req.user.email, isPrivate: false }
+            $and: [
+                {
+                    $or: [
+                        { _id: id, userId: userId },
+                        { _id: id, sharedWith: req.user.email, isPrivate: false }
+                    ]
+                },
+                {
+                    $or: [
+                        { isSafe: { $exists: false } },
+                        { isSafe: false }
+                    ]
+                }
             ]
         });
 

@@ -48,6 +48,10 @@ const fileSchema = new mongoose.Schema({
     isPrivate: {
         type: Boolean,
         default: false
+    },
+    isSafe: {
+        type: Boolean,
+        default: false
     }
 });
 

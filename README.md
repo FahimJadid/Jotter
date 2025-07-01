@@ -101,6 +101,18 @@ Jotter is a storage management system application that allows users to manage th
 - `GET /monthly` - Get monthly activities
 - `GET /recent` - Get recent activities
 
+### Safe Folder Routes (`/api/safe-folder`)
+- `GET /status` - Get safe folder status
+- `POST /enable` - Enable safe folder with PIN
+- `POST /disable` - Disable safe folder
+- `PUT /change-pin` - Change safe folder PIN
+- `POST /verify-pin` - Verify safe folder PIN
+- `POST /files` - Get safe files (requires PIN)
+- `POST /move-to-safe` - Move file to safe folder
+- `POST /move-from-safe` - Move file from safe folder
+- `POST /file/:id` - Get specific safe file by ID
+- `POST /download/:id` - Download safe file
+
 ## Installation
 
 1. Clone the repository:

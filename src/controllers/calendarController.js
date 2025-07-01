@@ -37,13 +37,17 @@ exports.filterByDate = async (req, res) => {
         // Set end date to end of day
         end.setHours(23, 59, 59, 999);
 
-        // Build query with user ownership
+        // Build query with user ownership (excluding safe files)
         const dateQuery = {
             userId: userId,
             createdAt: {
                 $gte: start,
                 $lte: end
-            }
+            },
+            $or: [
+                { isSafe: { $exists: false } },
+                { isSafe: false }
+            ]
         };
 
         let files = [];
@@ -124,7 +128,11 @@ exports.getDailyActivity = async (req, res) => {
             createdAt: {
                 $gte: startOfDay,
                 $lte: endOfDay
-            }
+            },
+            $or: [
+                { isSafe: { $exists: false } },
+                { isSafe: false }
+            ]
         };
 
         const files = await File.find(dateQuery).select('name type size createdAt');
@@ -199,7 +207,11 @@ exports.getMonthlyActivity = async (req, res) => {
             createdAt: {
                 $gte: startOfMonth,
                 $lte: endOfMonth
-            }
+            },
+            $or: [
+                { isSafe: { $exists: false } },
+                { isSafe: false }
+            ]
         };
 
         const files = await File.find(dateQuery).select('name type size createdAt');
@@ -274,7 +286,11 @@ exports.getRecentActivity = async (req, res) => {
             createdAt: {
                 $gte: startDate,
                 $lte: endDate
-            }
+            },
+            $or: [
+                { isSafe: { $exists: false } },
+                { isSafe: false }
+            ]
         };
 
         const files = await File.find(dateQuery)

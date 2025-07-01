@@ -16,6 +16,7 @@ const profileRoutes = require('./routes/profileRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
 const calendarRoutes = require('./routes/calendarRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
+const safeFolderRoutes = require('./routes/safeFolderRoutes');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/safe-folder', safeFolderRoutes);
 
 // Error handling middleware
 app.use(handleMulterError); // Handle multer-specific errors first

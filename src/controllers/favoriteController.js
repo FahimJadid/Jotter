@@ -25,10 +25,17 @@ exports.addFavorite = async (req, res) => {
             });
         }
 
-        // Check if item exists and user has access
+        // Check if item exists and user has access (excluding safe files from favorites)
         let item;
         if (itemType === 'File') {
-            item = await File.findOne({ _id: itemId, userId: userId });
+            item = await File.findOne({ 
+                _id: itemId, 
+                userId: userId,
+                $or: [
+                    { isSafe: { $exists: false } },
+                    { isSafe: false }
+                ]
+            });
         } else if (itemType === 'Folder') {
             item = await Folder.findOne({ _id: itemId, userId: userId });
         }
@@ -199,17 +206,26 @@ exports.getFavorites = async (req, res) => {
             .populate('itemId')
             .sort({ createdAt: -1 });
 
+        // Filter out favorites that reference safe files
+        const filteredFavorites = favorites.filter(fav => {
+            if (fav.itemType === 'File' && fav.itemId) {
+                // Exclude safe files from favorites
+                return !fav.itemId.isSafe;
+            }
+            return true; // Keep folders and other items
+        });
+
         // Separate files and folders for better organization
-        const files = favorites.filter(fav => fav.itemType === 'File');
-        const folders = favorites.filter(fav => fav.itemType === 'Folder');
+        const files = filteredFavorites.filter(fav => fav.itemType === 'File');
+        const folders = filteredFavorites.filter(fav => fav.itemType === 'Folder');
 
         res.status(200).json({ 
             success: true, 
-            total: favorites.length,
+            total: filteredFavorites.length,
             files: files.length,
             folders: folders.length,
             favorites: {
-                all: favorites,
+                all: filteredFavorites,
                 files: files,
                 folders: folders
             }
